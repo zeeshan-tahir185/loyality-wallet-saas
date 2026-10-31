@@ -181,7 +181,7 @@ export function CustomerCard({ slug }: { slug: string }) {
       </div>
 
       <div className="mt-8 text-center text-xs text-white/30">
-        {t("Powered by", "Con la tecnología de")} <Link href="/" className="underline">{BRAND}</Link>
+        {t("Powered by", "Con la tecnología de")} <Link href="/demo" className="underline">{BRAND}</Link>
       </div>
 
       <AnimatePresence>
