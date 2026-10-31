@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Gift, Repeat, ScanLine, Star, Users } from "lucide-react";
+import { ArrowUpRight, Gift, Palette, QrCode, Repeat, ScanLine, Star, Users } from "lucide-react";
 import { BarChart } from "@/components/bar-chart";
 import { ApplePass } from "@/components/pass";
 import { PageHead } from "@/components/ui";
@@ -52,7 +52,8 @@ export default function Overview() {
         sub={t(`Here's how ${business.name} is doing.`, `Así va ${business.name}.`)}
         actions={
           <>
-            <Link href="/demo" className="btn-ink"><ScanLine size={16} /> {t("Open scanner", "Abrir escáner")}</Link>
+            <Link href="/dashboard/qr" className="btn-ghost"><QrCode size={16} /> {t("Counter QR", "QR de mostrador")}</Link>
+            <Link href="/dashboard/scanner" className="btn-ink"><ScanLine size={16} /> {t("Open scanner", "Abrir escáner")}</Link>
           </>
         }
       />
@@ -103,7 +104,10 @@ export default function Overview() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="card p-6 lg:col-span-1">
-          <div className="font-semibold">{t("Your card", "Tu tarjeta")}</div>
+          <div className="flex items-center justify-between">
+            <div className="font-semibold">{t("Your card", "Tu tarjeta")}</div>
+            <Link href="/dashboard/card" className="flex items-center gap-1 text-sm font-medium text-muted hover:text-ink"><Palette size={14} /> {t("Edit", "Editar")}</Link>
+          </div>
           <div className="mt-4">
             <ApplePass business={business} customer={{ id: "preview", name: t("Your customer", "Tu cliente"), stamps: Math.ceil(business.program.stampsRequired / 2), points: 140, rewardsEarned: 0, rewardsRedeemed: 0 }} showQR={false} />
           </div>

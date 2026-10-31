@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import confetti from "canvas-confetti";
 import { QRCodeSVG } from "qrcode.react";
 import {
+  ArrowLeft,
   Camera,
   Check,
   Gift,
@@ -154,7 +155,8 @@ export default function DemoPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <h1 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+            <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink"><ArrowLeft size={14} /> {t("Back to site", "Volver a la web")}</Link>
+            <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
               {t("Watch a stamp land in the", "Mira cómo llega un sello a la")} <em className="font-display font-normal italic">{t("wallet", "cartera")}</em>{t(", live.", ", en vivo.")}
             </h1>
             <p className="mt-2 max-w-2xl text-zinc-600">{t("Left is the business. Right is the customer's phone. Pick a business type and a stamping method, then try it.", "A la izquierda, el negocio. A la derecha, el móvil del cliente. Elige un tipo de negocio y un método para sellar, y pruébalo.")}</p>

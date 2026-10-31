@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -8,6 +9,7 @@ import {
   ExternalLink,
   Link2,
   MousePointerClick,
+  QrCode,
   ShieldCheck,
   Star,
   Wallet,
@@ -59,6 +61,7 @@ export default function ReviewsPage() {
       <PageHead
         title={t("Google Reviews", "Reseñas de Google")}
         sub={t("Loyalty and online reputation in one place.", "Fidelización y reputación online en un solo lugar.")}
+        actions={<Link href="/dashboard/qr" className="btn-ghost"><QrCode size={16} /> {t("All QR codes", "Todos los QR")}</Link>}
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
