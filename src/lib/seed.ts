@@ -126,7 +126,6 @@ export function createSeed(now = Date.now()): DB {
     }
   });
 
-  // Make the hero demo customer predictable and close to a reward.
   const hero = customers[0];
   hero.name = "Lucía García";
   hero.stamps = 7;
@@ -136,7 +135,6 @@ export function createSeed(now = Date.now()): DB {
   return { version: DB_VERSION, businesses, customers, activity };
 }
 
-// Customer totals for businesses that are not fully seeded (used by the admin view).
 export const DISPLAY_CUSTOMER_COUNT: Record<string, number> = Object.fromEntries(
   BUSINESSES.map((b, i) => [`biz_${i}`, [46, 312, 1240, 186, 22, 408, 655, 930, 141, 38, 777, 210, 389, 97][i]]),
 );

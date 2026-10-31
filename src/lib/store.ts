@@ -174,7 +174,6 @@ export function setWallet(customerId: string, wallet: "apple" | "google") {
 export function markReviewed(customerId: string) {
   mutate((d) => {
     const c = d.customers.find((x) => x.id === customerId);
-    // Google does not allow rewarding reviews, so this only records the click.
     if (!c || c.reviewed) return;
     c.reviewed = true;
     log(d, { businessId: c.businessId, customerId, kind: "review", amount: 0, method: "self" });

@@ -32,11 +32,10 @@ export function CustomerCard({ slug }: { slug: string }) {
     setPlatform(/android/i.test(navigator.userAgent) ? "google" : "apple");
     setMyId(getMyCustomerId(business.id));
     setReady(true);
-  }, [business?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [business?.id]);
 
   const me = db?.customers.find((c) => c.id === myId) ?? null;
 
-  // Collect a stamp when the page was opened from the counter QR (?t=CODE).
   useEffect(() => {
     if (!business || !me || handled.current) return;
     const t = new URLSearchParams(window.location.search).get("t");
@@ -52,7 +51,7 @@ export function CustomerCard({ slug }: { slug: string }) {
     const res = addVisit(me.id, "self");
     if (!res) return;
     if (res.rewardUnlocked) {
-      setBanner({ kind: "reward", text: "Card complete — your reward is ready!" });
+      setBanner({ kind: "reward", text: "Card complete! Your reward is ready." });
       confetti({ particleCount: 150, spread: 90, origin: { y: 0.35 } });
     } else {
       setHighlight(res.customer.stamps - 1);

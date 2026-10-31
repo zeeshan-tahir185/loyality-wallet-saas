@@ -194,7 +194,7 @@ export function GooglePass({ business, customer, highlight, showQR = true }: Pas
         </div>
         <div className="text-right">
           <div className="text-[11px] opacity-70">Rewards</div>
-          <div className="text-[15px] font-medium">{available > 0 ? `${available} available` : "—"}</div>
+          <div className="text-[15px] font-medium">{available > 0 ? `${available} available` : "None"}</div>
         </div>
       </div>
       {showQR && (

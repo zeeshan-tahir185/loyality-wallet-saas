@@ -14,7 +14,7 @@ export default function QrPage() {
   const [origin, setOrigin] = useState("");
   const [review, setReview] = useState("");
   useEffect(() => setOrigin(window.location.origin), []);
-  useEffect(() => setReview(business?.googleReviewUrl ?? ""), [business?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => setReview(business?.googleReviewUrl ?? ""), [business?.id]);
   if (!db || !business || !origin) return null;
 
   const p = business.program;

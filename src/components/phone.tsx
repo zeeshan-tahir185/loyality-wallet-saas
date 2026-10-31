@@ -72,7 +72,6 @@ export function Phone({
   );
 }
 
-/** Background cards peeking behind the loyalty pass, like the Wallet app. */
 export function WalletStack({ children, platform = "apple" }: { children: React.ReactNode; platform?: "apple" | "google" }) {
   if (platform === "google") {
     return (

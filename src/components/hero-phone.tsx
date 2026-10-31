@@ -29,7 +29,7 @@ export function HeroPhone() {
         return;
       }
       setStamps(s);
-      setToast({ id: Date.now(), title: biz.name, body: `Stamp added — ${s}/${req}. ${req - s} to go!`, icon: <Stamp size={18} /> });
+      setToast({ id: Date.now(), title: biz.name, body: `Stamp added: ${s}/${req}. ${req - s} to go!`, icon: <Stamp size={18} /> });
     }, 2400);
     return () => clearInterval(id);
   }, []);

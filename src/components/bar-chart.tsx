@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export type Bar = { label: string; value: number; sub?: string };
 
-/** Single-series bar chart with a per-bar hover tooltip. */
 export function BarChart({ data, height = 200, color = "#0c0c10", format = (v: number) => `${v}` }: { data: Bar[]; height?: number; color?: string; format?: (v: number) => string }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.value));

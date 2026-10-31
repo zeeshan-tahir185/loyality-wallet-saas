@@ -7,7 +7,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const display = Instrument_Serif({ variable: "--font-display", subsets: ["latin"], weight: "400", style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
-  title: "LoopWallet — Digital loyalty cards for Apple & Google Wallet",
+  title: "LoopWallet | Digital loyalty cards for Apple & Google Wallet",
   description:
     "Launch a digital stamp or points card in minutes. Customers save it to Apple Wallet or Google Wallet, collect stamps by QR, and come back more often.",
 };

@@ -46,11 +46,11 @@ export function IndustryShowcase() {
                 <>
                   <Stat k="Stamps" v={`${ind.program.stampsRequired}`} />
                   <Stat k="Reward" v={ind.program.stampReward} />
-                  <Stat k="Welcome" v={ind.program.welcomeBonus ? `${ind.program.welcomeBonus} free stamp` : "—"} />
+                  <Stat k="Welcome" v={ind.program.welcomeBonus ? `${ind.program.welcomeBonus} free stamp` : "None"} />
                 </>
               ) : (
                 <>
-                  <Stat k="Per visit" v={ind.program.pointsPerVisit ? `${ind.program.pointsPerVisit} pts` : "—"} />
+                  <Stat k="Per visit" v={ind.program.pointsPerVisit ? `${ind.program.pointsPerVisit} pts` : "None"} />
                   <Stat k="Per €1" v={`${ind.program.pointsPerEuro} pts`} />
                   <Stat k="Top reward" v={ind.program.tiers[2].name} />
                 </>

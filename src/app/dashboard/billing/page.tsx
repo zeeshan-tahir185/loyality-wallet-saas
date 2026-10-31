@@ -146,7 +146,7 @@ function Checkout({ onClose, onPaid, email }: { onClose: () => void; onPaid: () 
             {state === "paying" && <><Loader2 size={18} className="animate-spin" /> Processing…</>}
             {state === "done" && <><Check size={18} /> Payment successful</>}
           </button>
-          <div className="mt-3 text-center text-xs text-muted">Demo checkout — no real payment is taken.</div>
+          <div className="mt-3 text-center text-xs text-muted">Demo checkout. No real payment is taken.</div>
         </form>
       </motion.div>
     </motion.div>

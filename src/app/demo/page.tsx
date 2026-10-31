@@ -84,7 +84,7 @@ export default function DemoPage() {
     } else if (p.type === "stamps") {
       setHighlight(c.stamps - 1);
       const left = p.stampsRequired - c.stamps;
-      setToast({ id: Date.now(), title: business.name, body: `You collected a stamp — ${c.stamps}/${p.stampsRequired}. ${left} more for ${p.stampReward.toLowerCase()}.`, icon: <Stamp size={18} /> });
+      setToast({ id: Date.now(), title: business.name, body: `You collected a stamp! ${c.stamps}/${p.stampsRequired}. ${left} more for ${p.stampReward.toLowerCase()}.`, icon: <Stamp size={18} /> });
     } else {
       setToast({ id: Date.now(), title: business.name, body: `+${p.pointsPerVisit + Math.round(spend * p.pointsPerEuro)} points! You now have ${c.points} points.`, icon: <Sparkles size={18} /> });
     }
@@ -193,7 +193,6 @@ export default function DemoPage() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
-          {/* Business side */}
           <div className="flex flex-col gap-6">
             <div className="card overflow-hidden">
               <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
@@ -250,7 +249,7 @@ export default function DemoPage() {
                     </ol>
                     <div className="mt-6 rounded-2xl border border-dashed border-zinc-300 bg-paper p-4 text-sm">
                       <div className="flex items-center gap-2 font-semibold"><Camera size={16} /> Try it with your real phone</div>
-                      <div className="mt-1 text-muted">Point your phone camera at this QR — it opens the customer card for {business.name} in your browser.</div>
+                      <div className="mt-1 text-muted">Point your phone camera at this QR. It opens the customer card for {business.name} in your browser.</div>
                     </div>
                   </div>
                 </div>
@@ -263,7 +262,6 @@ export default function DemoPage() {
             </div>
           </div>
 
-          {/* Customer side */}
           <div ref={phoneRef} className="flex flex-col items-center gap-3 lg:sticky lg:top-6 lg:self-start">
             <div className="flex items-center gap-2 text-sm font-medium text-muted">
               <UserRound size={15} /> {customer.name}&apos;s phone
@@ -485,7 +483,7 @@ function CustomerSummary({ business, customer, available }: { business: Business
     [p.type === "stamps" ? "Stamps on card" : "Points balance", p.type === "stamps" ? `${customer.stamps} / ${p.stampsRequired}` : `${customer.points}`],
     ["Rewards earned", `${customer.rewardsEarned}`],
     ["Ready to redeem", `${available}`],
-    ["Wallet", customer.wallet === "apple" ? "Apple Wallet" : customer.wallet === "google" ? "Google Wallet" : "—"],
+    ["Wallet", customer.wallet === "apple" ? "Apple Wallet" : customer.wallet === "google" ? "Google Wallet" : "Not added"],
   ];
   return (
     <div className="card p-5">

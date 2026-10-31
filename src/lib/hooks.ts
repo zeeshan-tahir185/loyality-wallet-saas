@@ -57,7 +57,6 @@ export function timeAgo(iso: string, now = Date.now()) {
   return new Date(iso).toLocaleDateString();
 }
 
-/** Rotating one-time code for the counter QR. */
 export function counterCode(businessId: string, slot = Math.floor(Date.now() / 30_000)) {
   let h = 2166136261;
   for (const ch of `${businessId}:${slot}`) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);

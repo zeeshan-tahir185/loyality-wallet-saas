@@ -26,7 +26,7 @@ export default function Home() {
       <Marquee />
       <QRMethods />
       <section id="industries" className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
-        <SectionHead eyebrow="Built for every business" title={<>One platform, <em className="font-display italic">any</em> industry.</>} sub="Gyms, barbershops, salons, cafés, clothing and perfume stores — each business picks stamps or points and sets its own rewards." />
+        <SectionHead eyebrow="Built for every business" title={<>One platform, <em className="font-display italic">any</em> industry.</>} sub="Gyms, barbershops, salons, cafés, clothing and perfume stores. Each business picks stamps or points and sets its own rewards." />
         <div className="mt-14">
           <IndustryShowcase />
         </div>
@@ -72,7 +72,7 @@ function Hero() {
             Loyalty cards that live in your customers&apos; <em className="font-display font-normal italic">wallet.</em>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-600">
-            Replace paper punch cards with digital stamps, points and rewards. Customers join with one QR scan, no app to download — and every visit brings them closer to their next reward.
+            Replace paper punch cards with digital stamps, points and rewards. Customers join with one QR scan, no app to download, and every visit brings them closer to their next reward.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link href="/demo" className="btn-ink px-6 py-3.5 text-base">Try the live demo <ArrowRight size={18} /></Link>
@@ -131,7 +131,7 @@ function SectionHead({ eyebrow, title, sub, center = false }: { eyebrow: string;
 function QRMethods() {
   return (
     <section id="how" className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
-      <SectionHead center eyebrow="How it works" title={<>Two ways to stamp. <em className="font-display italic">Zero</em> friction.</>} sub="Every business can use both methods — whatever fits the counter, the queue and the staff." />
+      <SectionHead center eyebrow="How it works" title={<>Two ways to stamp. <em className="font-display italic">Zero</em> friction.</>} sub="Every business can use both methods, whichever fits the counter, the queue and the staff." />
       <div className="mt-14 grid gap-6 lg:grid-cols-2">
         <div className="card relative overflow-hidden p-8">
           <div className="flex items-center gap-3">
@@ -152,14 +152,14 @@ function QRMethods() {
               <h3 className="text-xl font-semibold">Customer scans the business</h3>
             </div>
           </div>
-          <p className="mt-4 text-white/70">Print the counter QR or show it on a tablet. Customers scan it with their camera and collect their stamp — perfect for busy hours.</p>
+          <p className="mt-4 text-white/70">Print the counter QR or show it on a tablet. Customers scan it with their camera and collect their stamp. Perfect for busy hours.</p>
           <Steps dark items={["Counter QR at the till", "Customer scans with their camera", "Fresh one-time code stops repeat scans"]} />
         </div>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         {[
           [Smartphone, "No app needed", "Cards save straight into Apple Wallet or Google Wallet."],
-          [Users, "One-tap sign up", "Name and phone — that’s it. Joined in under 20 seconds."],
+          [Users, "One-tap sign up", "Just a name and phone number. Joined in under 20 seconds."],
           [ShieldCheck, "Fraud-safe", "Rotating codes and per-day limits prevent stamp abuse."],
         ].map(([Icon, t, d]) => {
           const I = Icon as typeof Smartphone;
@@ -193,11 +193,11 @@ function Steps({ items, dark = false }: { items: string[]; dark?: boolean }) {
 
 function Features() {
   const f = [
-    [Palette, "Card designer", "Colours, icon, stamp count, rewards — with a live wallet preview as you edit."],
+    [Palette, "Card designer", "Colours, icon, stamp count, rewards, with a live wallet preview as you edit."],
     [Star, "Stamps & points", "Classic punch cards or points per visit and per € spent with reward tiers."],
     [ScanLine, "Staff scanner", "A scanner page that runs in the browser on any phone or tablet."],
     [Users, "Customer CRM", "See every member, their visits, rewards and last visit at a glance."],
-    [BarChart3, "Insights", "Visits, returning customers and redemptions — know what is working."],
+    [BarChart3, "Insights", "Visits, returning customers and redemptions. Know what is working."],
     [CreditCard, "Simple billing", "One monthly plan, paid by card through Stripe. Cancel anytime."],
   ] as const;
   return (

@@ -96,7 +96,7 @@ export default function CustomersPage() {
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums">{c.visits}</td>
                     <td className="px-4 py-3">{ready > 0 ? <Badge tone="lime"><Gift size={11} /> {ready} ready</Badge> : <span className="text-muted">{c.rewardsRedeemed} redeemed</span>}</td>
-                    <td className="px-4 py-3">{c.wallet === "apple" ? <Badge>Apple</Badge> : c.wallet === "google" ? <Badge tone="sky">Google</Badge> : <span className="text-muted">—</span>}</td>
+                    <td className="px-4 py-3">{c.wallet === "apple" ? <Badge>Apple</Badge> : c.wallet === "google" ? <Badge tone="sky">Google</Badge> : <span className="text-muted">Not added</span>}</td>
                     <td className="px-4 py-3 text-muted">{timeAgo(c.lastVisit, now)}</td>
                   </tr>
                 );
