@@ -27,12 +27,16 @@ import { ApplePass, BizMark, GooglePass } from "@/components/pass";
 import { Phone, type Toast, WalletStack } from "@/components/phone";
 import { addVisit, redeemReward, resetDemo, useDB } from "@/lib/store";
 import { counterCode, timeAgo, useNow } from "@/lib/hooks";
+import { LangSwitch, useLang, useT } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 import type { Activity, Business, Customer } from "@/lib/types";
 
 const DEMO_BIZ = ["biz_0", "biz_1", "biz_2", "biz_3"];
 
 export default function DemoPage() {
   const db = useDB();
+  const t = useT();
+  const lang = useLang();
   const now = useNow(1000);
   const [bizId, setBizId] = useState("biz_0");
   const [mode, setMode] = useState<"staff" | "self">("staff");
@@ -79,14 +83,14 @@ export default function DemoPage() {
     const c = res.customer;
     if (res.rewardUnlocked) {
       setHighlight(-1);
-      setToast({ id: Date.now(), title: business.name, body: p.type === "stamps" ? `Card complete! ${p.stampReward} unlocked 🎉` : `New reward unlocked 🎉`, icon: <Gift size={18} /> });
+      setToast({ id: Date.now(), title: business.name, body: p.type === "stamps" ? t(`Card complete! ${p.stampReward} unlocked 🎉`, `¡Tarjeta completa! ${p.stampReward} desbloqueado 🎉`) : t("New reward unlocked 🎉", "Nueva recompensa desbloqueada 🎉"), icon: <Gift size={18} /> });
       celebrate();
     } else if (p.type === "stamps") {
       setHighlight(c.stamps - 1);
       const left = p.stampsRequired - c.stamps;
-      setToast({ id: Date.now(), title: business.name, body: `You collected a stamp! ${c.stamps}/${p.stampsRequired}. ${left} more for ${p.stampReward.toLowerCase()}.`, icon: <Stamp size={18} /> });
+      setToast({ id: Date.now(), title: business.name, body: t(`You collected a stamp! ${c.stamps}/${p.stampsRequired}. ${left} more for ${p.stampReward.toLowerCase()}.`, `¡Has sumado un sello! ${c.stamps}/${p.stampsRequired}. Te faltan ${left} para: ${p.stampReward.toLowerCase()}.`), icon: <Stamp size={18} /> });
     } else {
-      setToast({ id: Date.now(), title: business.name, body: `+${p.pointsPerVisit + Math.round(spend * p.pointsPerEuro)} points! You now have ${c.points} points.`, icon: <Sparkles size={18} /> });
+      setToast({ id: Date.now(), title: business.name, body: t(`+${p.pointsPerVisit + Math.round(spend * p.pointsPerEuro)} points! You now have ${c.points} points.`, `¡+${p.pointsPerVisit + Math.round(spend * p.pointsPerEuro)} puntos! Ahora tienes ${c.points} puntos.`), icon: <Sparkles size={18} /> });
     }
   };
 
@@ -133,15 +137,16 @@ export default function DemoPage() {
           <div className="flex items-center gap-3">
             <Logo />
             <span className="hidden items-center gap-1.5 rounded-full bg-ink px-2.5 py-1 text-[11px] font-semibold text-lime sm:flex">
-              <span className="size-1.5 animate-pulse rounded-full bg-lime" /> LIVE DEMO
+              <span className="size-1.5 animate-pulse rounded-full bg-lime" /> {t("LIVE DEMO", "DEMO EN VIVO")}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => { resetDemo(); switchBiz(bizId); }} className="btn-ghost hidden px-3.5 py-2 sm:inline-flex" title="Reset demo data">
-              <RotateCcw size={15} /> Reset
+            <LangSwitch />
+            <button onClick={() => { resetDemo(); switchBiz(bizId); }} className="btn-ghost hidden px-3.5 py-2 sm:inline-flex" title={t("Reset demo data", "Reiniciar datos")}>
+              <RotateCcw size={15} /> {t("Reset", "Reiniciar")}
             </button>
             <Link href="/dashboard" className="btn-ink px-4 py-2">
-              <LayoutDashboard size={16} /> Dashboard
+              <LayoutDashboard size={16} /> {t("Dashboard", "Panel")}
             </Link>
           </div>
         </div>
@@ -150,11 +155,11 @@ export default function DemoPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink"><ArrowLeft size={14} /> Back to site</Link>
+            <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink"><ArrowLeft size={14} /> {t("Back to site", "Volver a la web")}</Link>
             <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-              Watch a stamp land in the <em className="font-display font-normal italic">wallet</em>, live.
+              {t("Watch a stamp land in the", "Mira cómo llega un sello a la")} <em className="font-display font-normal italic">{t("wallet", "cartera")}</em>{t(", live.", ", en vivo.")}
             </h1>
-            <p className="mt-2 max-w-2xl text-zinc-600">Left is the business. Right is the customer&apos;s phone. Pick a business type and a stamping method, then try it.</p>
+            <p className="mt-2 max-w-2xl text-zinc-600">{t("Left is the business. Right is the customer's phone. Pick a business type and a stamping method, then try it.", "A la izquierda, el negocio. A la derecha, el móvil del cliente. Elige un tipo de negocio y un método para sellar, y pruébalo.")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {DEMO_BIZ.map((id) => {
@@ -178,8 +183,8 @@ export default function DemoPage() {
             value={mode}
             onChange={(v) => switchMode(v as "staff" | "self")}
             options={[
-              { v: "staff", label: "Staff scans customer", icon: <ScanLine size={15} /> },
-              { v: "self", label: "Customer scans counter QR", icon: <QrCode size={15} /> },
+              { v: "staff", label: t("Staff scans customer", "El personal escanea"), icon: <ScanLine size={15} /> },
+              { v: "self", label: t("Customer scans counter QR", "El cliente escanea el QR"), icon: <QrCode size={15} /> },
             ]}
           />
           <Segmented
@@ -198,10 +203,10 @@ export default function DemoPage() {
               <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
                 <div className="flex items-center gap-2.5">
                   <Store size={18} />
-                  <span className="font-semibold">{mode === "staff" ? "Staff scanner" : "Counter display"}</span>
+                  <span className="font-semibold">{mode === "staff" ? t("Staff scanner", "Escáner del personal") : t("Counter display", "Pantalla del mostrador")}</span>
                   <span className="text-sm text-muted">· {business.name}</span>
                 </div>
-                <span className="rounded-full bg-paper px-2.5 py-1 text-xs font-medium text-muted">{p.type === "stamps" ? `Stamp card · ${p.stampsRequired} stamps` : "Points program"}</span>
+                <span className="rounded-full bg-paper px-2.5 py-1 text-xs font-medium text-muted">{p.type === "stamps" ? t(`Stamp card · ${p.stampsRequired} stamps`, `Tarjeta de sellos · ${p.stampsRequired} sellos`) : t("Points program", "Programa de puntos")}</span>
               </div>
 
               {mode === "staff" ? (
@@ -216,7 +221,7 @@ export default function DemoPage() {
                   onAdd={staffAdd}
                   onRedeem={() => {
                     redeemReward(customer.id, p.type === "points" ? p.tiers.find((t) => t.points <= customer.points)?.points : undefined);
-                    setToast({ id: Date.now(), title: business.name, body: "Reward redeemed. Enjoy! 🙌", icon: <Check size={18} /> });
+                    setToast({ id: Date.now(), title: business.name, body: t("Reward redeemed. Enjoy! 🙌", "Recompensa canjeada. ¡Que la disfrutes! 🙌"), icon: <Check size={18} /> });
                   }}
                   onReset={() => setPhase("idle")}
                 />
@@ -225,31 +230,31 @@ export default function DemoPage() {
                   <div className="mx-auto flex w-[230px] flex-col items-center rounded-3xl p-5 text-center" style={{ background: p.bg, color: p.fg }}>
                     <BizMark program={p} size={44} />
                     <div className="mt-2 font-semibold">{business.name}</div>
-                    <div className="text-xs opacity-70">Scan to collect your {p.type === "stamps" ? "stamp" : "points"}</div>
+                    <div className="text-xs opacity-70">{p.type === "stamps" ? t("Scan to collect your stamp", "Escanea para sumar tu sello") : t("Scan to collect your points", "Escanea para sumar tus puntos")}</div>
                     <div className="mt-4 rounded-2xl bg-white p-3">
                       {origin && <QRCodeSVG value={counterUrl} size={160} level="M" />}
                     </div>
                     <div className="mt-3 flex items-center gap-2 font-mono text-xs">
                       <span className="rounded bg-white/15 px-1.5 py-0.5 tracking-widest">{code}</span>
-                      <span className="opacity-70">new code in {secondsLeft}s</span>
+                      <span className="opacity-70">{t("new code in", "nuevo código en")} {secondsLeft}s</span>
                     </div>
                     <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/15">
                       <div className="h-full rounded-full transition-[width] duration-1000 ease-linear" style={{ width: `${(secondsLeft / 30) * 100}%`, background: p.accent }} />
                     </div>
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h3 className="text-2xl font-semibold tracking-tight">Customers stamp themselves.</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight">{t("Customers stamp themselves.", "El cliente se sella solo.")}</h3>
                     <p className="mt-2 text-zinc-600">
-                      Put this QR on the counter or a tablet. The code refreshes every 30 seconds, so a photo of it can&apos;t be reused at home.
+                      {t("Put this QR on the counter or a tablet. The code refreshes every 30 seconds, so a photo of it can't be reused at home.", "Pon este QR en el mostrador o en una tablet. El código cambia cada 30 segundos, así que una foto no sirve para sellar desde casa.")}
                     </p>
                     <ol className="mt-5 space-y-2.5 text-sm">
-                      <li className="flex gap-3"><Num n={1} /> Tap <b>Scan counter QR</b> on the phone →</li>
-                      <li className="flex gap-3"><Num n={2} /> The camera reads the rotating code</li>
-                      <li className="flex gap-3"><Num n={3} /> The stamp appears on the wallet card</li>
+                      <li className="flex gap-3"><Num n={1} /> {t("Tap", "Pulsa")} <b>{t("Scan counter QR", "Escanear QR")}</b> {t("on the phone →", "en el móvil →")}</li>
+                      <li className="flex gap-3"><Num n={2} /> {t("The camera reads the rotating code", "La cámara lee el código rotativo")}</li>
+                      <li className="flex gap-3"><Num n={3} /> {t("The stamp appears on the wallet card", "El sello aparece en la tarjeta")}</li>
                     </ol>
                     <div className="mt-6 rounded-2xl border border-dashed border-zinc-300 bg-paper p-4 text-sm">
-                      <div className="flex items-center gap-2 font-semibold"><Camera size={16} /> Try it with your real phone</div>
-                      <div className="mt-1 text-muted">Point your phone camera at this QR. It opens the customer card for {business.name} in your browser.</div>
+                      <div className="flex items-center gap-2 font-semibold"><Camera size={16} /> {t("Try it with your real phone", "Pruébalo con tu propio móvil")}</div>
+                      <div className="mt-1 text-muted">{t(`Point your phone camera at this QR. It opens the customer card for ${business.name} in your browser.`, `Apunta la cámara de tu móvil a este QR. Se abrirá la tarjeta de cliente de ${business.name} en tu navegador.`)}</div>
                     </div>
                   </div>
                 </div>
@@ -257,14 +262,14 @@ export default function DemoPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
-              <ActivityFeed feed={feed} customers={db.customers} now={now} />
+              <ActivityFeed feed={feed} customers={db.customers} now={now} lang={lang} />
               <CustomerSummary business={business} customer={customer} available={available} />
             </div>
           </div>
 
           <div ref={phoneRef} className="flex flex-col items-center gap-3 lg:sticky lg:top-6 lg:self-start">
             <div className="flex items-center gap-2 text-sm font-medium text-muted">
-              <UserRound size={15} /> {customer.name}&apos;s phone
+              <UserRound size={15} /> {t(`${customer.name}'s phone`, `Móvil de ${customer.name}`)}
             </div>
             <Phone toast={toast}>
               <AnimatePresence mode="wait">
@@ -278,14 +283,14 @@ export default function DemoPage() {
                       )}
                       {mode === "self" && (
                         <button onClick={() => setPhoneScreen("camera")} className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white/10 py-3 text-sm font-semibold">
-                          <Camera size={16} /> Open camera to scan again
+                          <Camera size={16} /> {t("Open camera to scan again", "Abrir la cámara para escanear")}
                         </button>
                       )}
                     </WalletStack>
                   </motion.div>
                 ) : (
                   <motion.div key="cam" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative flex min-h-full flex-col items-center bg-zinc-900 px-6 pt-6">
-                    <div className="text-xs font-semibold uppercase tracking-widest text-yellow-400">Photo · QR</div>
+                    <div className="text-xs font-semibold uppercase tracking-widest text-yellow-400">{t("Photo · QR", "Foto · QR")}</div>
                     <div className="relative mt-6 grid size-[230px] place-items-center rounded-3xl bg-gradient-to-br from-zinc-700 to-zinc-800">
                       <div className="rounded-xl bg-white p-2 opacity-90" style={{ transform: "perspective(400px) rotateX(12deg) rotateZ(-4deg)" }}>
                         {origin && <QRCodeSVG value={counterUrl} size={120} />}
@@ -298,23 +303,23 @@ export default function DemoPage() {
                           <Loader2 size={15} className="animate-spin" /> {business.slug}.loopwallet.app
                         </motion.div>
                       ) : (
-                        <span className="text-white/70">Point the camera at the counter QR</span>
+                        <span className="text-white/70">{t("Point the camera at the counter QR", "Apunta la cámara al QR del mostrador")}</span>
                       )}
                     </div>
                     <button
                       onClick={customerScan}
                       disabled={phoneScreen === "reading"}
                       className="mt-6 grid size-[74px] place-items-center rounded-full border-4 border-white/90 transition active:scale-95"
-                      aria-label="Scan counter QR"
+                      aria-label={t("Scan counter QR", "Escanear QR")}
                     >
                       <span className="grid size-[58px] place-items-center rounded-full bg-white text-black"><QrCode size={24} /></span>
                     </button>
-                    <div className="mt-3 text-xs font-semibold">Scan counter QR</div>
+                    <div className="mt-3 text-xs font-semibold">{t("Scan counter QR", "Escanear QR")}</div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </Phone>
-            <div className="text-xs text-muted">The card updates the moment the business adds a stamp.</div>
+            <div className="text-xs text-muted">{t("The card updates the moment the business adds a stamp.", "La tarjeta se actualiza en cuanto el negocio añade un sello.")}</div>
           </div>
         </div>
       </div>
@@ -345,6 +350,7 @@ function StaffScanner({
   onRedeem: () => void;
   onReset: () => void;
 }) {
+  const t = useT();
   const p = business.program;
   return (
     <div className="grid gap-8 p-6 sm:grid-cols-[auto_1fr] sm:p-8">
@@ -376,10 +382,10 @@ function StaffScanner({
         <AnimatePresence mode="wait">
           {phase !== "found" ? (
             <motion.div key="scan" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-              <h3 className="text-2xl font-semibold tracking-tight">Scan the customer&apos;s card</h3>
-              <p className="mt-2 text-zinc-600">The customer opens the pass in Apple or Google Wallet and shows the QR. Staff scan it with this page on any phone or tablet.</p>
+              <h3 className="text-2xl font-semibold tracking-tight">{t("Scan the customer's card", "Escanea la tarjeta del cliente")}</h3>
+              <p className="mt-2 text-zinc-600">{t("The customer opens the pass in Apple or Google Wallet and shows the QR. Staff scan it with this page on any phone or tablet.", "El cliente abre la tarjeta en Apple o Google Wallet y muestra el QR. El personal lo escanea desde esta página con cualquier móvil o tablet.")}</p>
               <button onClick={onScan} disabled={phase === "scanning"} className="btn-ink mt-6 px-6 py-3.5 text-base">
-                {phase === "scanning" ? <><Loader2 size={18} className="animate-spin" /> Scanning…</> : <><ScanLine size={18} /> Scan customer QR</>}
+                {phase === "scanning" ? <><Loader2 size={18} className="animate-spin" /> {t("Scanning…", "Escaneando…")}</> : <><ScanLine size={18} /> {t("Scan customer QR", "Escanear QR del cliente")}</>}
               </button>
             </motion.div>
           ) : (
@@ -389,14 +395,14 @@ function StaffScanner({
                 <div>
                   <div className="text-lg font-semibold">{customer.name}</div>
                   <div className="text-sm text-muted">
-                    {customer.visits} visits · {p.type === "stamps" ? `${customer.stamps}/${p.stampsRequired} stamps` : `${customer.points} points`}
+                    {customer.visits} {t("visits", "visitas")} · {p.type === "stamps" ? `${customer.stamps}/${p.stampsRequired} ${t("stamps", "sellos")}` : `${customer.points} ${t("points", "puntos")}`}
                   </div>
                 </div>
               </div>
 
               {p.type === "points" && (
                 <div className="mt-5">
-                  <label className="text-sm font-medium">Purchase amount</label>
+                  <label className="text-sm font-medium">{t("Purchase amount", "Importe de la compra")}</label>
                   <div className="mt-1.5 flex items-center gap-2">
                     {[10, 25, 50].map((v) => (
                       <button key={v} onClick={() => setSpend(v)} className={`rounded-xl border px-3.5 py-2 text-sm font-semibold ${spend === v ? "border-ink bg-ink text-white" : "border-line bg-white"}`}>€{v}</button>
@@ -408,14 +414,14 @@ function StaffScanner({
 
               <div className="mt-6 flex flex-wrap gap-2">
                 <button onClick={onAdd} className="btn-lime px-6 py-3.5 text-base">
-                  <Zap size={18} /> {p.type === "stamps" ? "Add stamp" : "Add points"}
+                  <Zap size={18} /> {p.type === "stamps" ? t("Add stamp", "Añadir sello") : t("Add points", "Añadir puntos")}
                 </button>
                 {available > 0 && (
                   <motion.button initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={onRedeem} className="btn-ink px-5 py-3.5 text-base">
-                    <Gift size={18} /> Redeem reward ({available})
+                    <Gift size={18} /> {t("Redeem reward", "Canjear recompensa")} ({available})
                   </motion.button>
                 )}
-                <button onClick={onReset} className="btn-ghost px-5 py-3.5 text-base">Next customer</button>
+                <button onClick={onReset} className="btn-ghost px-5 py-3.5 text-base">{t("Next customer", "Siguiente cliente")}</button>
               </div>
             </motion.div>
           )}
@@ -437,36 +443,38 @@ function Corners({ active }: { active: boolean }) {
   );
 }
 
-const KIND: Record<Activity["kind"], [string, string]> = {
-  stamp: ["Stamp added", "bg-lime text-ink"],
-  points: ["Points added", "bg-sky-100 text-sky-800"],
-  reward: ["Reward unlocked", "bg-amber-100 text-amber-800"],
-  redeem: ["Reward redeemed", "bg-ink text-white"],
-  join: ["Joined program", "bg-violet-100 text-violet-800"],
-  review: ["Left a Google review", "bg-yellow-100 text-yellow-800"],
-  wallet: ["Saved to wallet", "bg-zinc-100 text-zinc-800"],
+const KIND: Record<Activity["kind"], [string, string, string]> = {
+  stamp: ["Stamp added", "Sello añadido", "bg-lime text-ink"],
+  points: ["Points added", "Puntos añadidos", "bg-sky-100 text-sky-800"],
+  reward: ["Reward unlocked", "Recompensa desbloqueada", "bg-amber-100 text-amber-800"],
+  redeem: ["Reward redeemed", "Recompensa canjeada", "bg-ink text-white"],
+  join: ["Joined program", "Se unió al programa", "bg-violet-100 text-violet-800"],
+  review: ["Opened Google review", "Abrió la reseña de Google", "bg-yellow-100 text-yellow-800"],
+  wallet: ["Saved to wallet", "Guardó la tarjeta", "bg-zinc-100 text-zinc-800"],
 };
 
-function ActivityFeed({ feed, customers, now }: { feed: Activity[]; customers: Customer[]; now: number }) {
+function ActivityFeed({ feed, customers, now, lang }: { feed: Activity[]; customers: Customer[]; now: number; lang: Lang }) {
+  const t = useT();
   return (
     <div className="card p-5">
       <div className="flex items-center justify-between">
-        <div className="font-semibold">Live activity</div>
-        <span className="flex items-center gap-1.5 text-xs text-muted"><span className="size-1.5 animate-pulse rounded-full bg-green-500" /> real-time</span>
+        <div className="font-semibold">{t("Live activity", "Actividad en vivo")}</div>
+        <span className="flex items-center gap-1.5 text-xs text-muted"><span className="size-1.5 animate-pulse rounded-full bg-green-500" /> {t("real-time", "tiempo real")}</span>
       </div>
-      {feed.length === 0 && <div className="mt-6 rounded-xl bg-paper p-6 text-center text-sm text-muted">Scan a card and the activity shows up here instantly.</div>}
+      {feed.length === 0 && <div className="mt-6 rounded-xl bg-paper p-6 text-center text-sm text-muted">{t("Scan a card and the activity shows up here instantly.", "Escanea una tarjeta y la actividad aparecerá aquí al instante.")}</div>}
       <ul className="mt-3 divide-y divide-line">
         <AnimatePresence initial={false}>
           {feed.map((a) => {
             const c = customers.find((x) => x.id === a.customerId);
-            const [label, cls] = KIND[a.kind];
+            const [en, es, cls] = KIND[a.kind];
+            const label = lang === "es" ? es : en;
             return (
               <motion.li key={a.id} layout initial={{ opacity: 0, backgroundColor: "#f3fde0" }} animate={{ opacity: 1, backgroundColor: "#ffffff" }} transition={{ duration: 1 }} className="flex items-center justify-between gap-3 py-2.5 text-sm">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <span className={`shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{label}{a.kind === "points" ? ` +${a.amount}` : ""}</span>
                   <span className="truncate">{c?.name}</span>
                 </div>
-                <span className="shrink-0 text-xs text-muted">{a.method === "staff" ? "by staff · " : a.method === "self" ? "self-scan · " : ""}{timeAgo(a.at, now)}</span>
+                <span className="shrink-0 text-xs text-muted">{a.method === "staff" ? t("by staff · ", "personal · ") : a.method === "self" ? t("self-scan · ", "autoescaneo · ") : ""}{timeAgo(a.at, now, lang)}</span>
               </motion.li>
             );
           })}
@@ -477,17 +485,18 @@ function ActivityFeed({ feed, customers, now }: { feed: Activity[]; customers: C
 }
 
 function CustomerSummary({ business, customer, available }: { business: Business; customer: Customer; available: number }) {
+  const t = useT();
   const p = business.program;
   const rows: [string, string][] = [
-    ["Total visits", `${customer.visits}`],
-    [p.type === "stamps" ? "Stamps on card" : "Points balance", p.type === "stamps" ? `${customer.stamps} / ${p.stampsRequired}` : `${customer.points}`],
-    ["Rewards earned", `${customer.rewardsEarned}`],
-    ["Ready to redeem", `${available}`],
-    ["Wallet", customer.wallet === "apple" ? "Apple Wallet" : customer.wallet === "google" ? "Google Wallet" : "Not added"],
+    [t("Total visits", "Visitas totales"), `${customer.visits}`],
+    [p.type === "stamps" ? t("Stamps on card", "Sellos en la tarjeta") : t("Points balance", "Saldo de puntos"), p.type === "stamps" ? `${customer.stamps} / ${p.stampsRequired}` : `${customer.points}`],
+    [t("Rewards earned", "Recompensas ganadas"), `${customer.rewardsEarned}`],
+    [t("Ready to redeem", "Listas para canjear"), `${available}`],
+    ["Wallet", customer.wallet === "apple" ? "Apple Wallet" : customer.wallet === "google" ? "Google Wallet" : t("Not added", "No añadida")],
   ];
   return (
     <div className="card p-5">
-      <div className="font-semibold">Customer profile</div>
+      <div className="font-semibold">{t("Customer profile", "Perfil del cliente")}</div>
       <dl className="mt-3 space-y-2.5 text-sm">
         {rows.map(([k, v]) => (
           <div key={k} className="flex justify-between">
@@ -496,7 +505,7 @@ function CustomerSummary({ business, customer, available }: { business: Business
           </div>
         ))}
       </dl>
-      <Link href={`/c/${business.slug}`} target="_blank" className="btn-ghost mt-4 w-full">Open customer card page ↗</Link>
+      <Link href={`/c/${business.slug}`} target="_blank" className="btn-ghost mt-4 w-full">{t("Open customer card page", "Abrir página del cliente")} ↗</Link>
     </div>
   );
 }

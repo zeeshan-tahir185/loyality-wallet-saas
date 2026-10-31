@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { BatteryFull, Signal, Wifi } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 function Clock() {
   const [t, setT] = useState("9:41");
@@ -28,6 +29,7 @@ export function Phone({
   toast?: Toast;
   className?: string;
 }) {
+  const now = useT()("now", "ahora");
   return (
     <div className={`relative mx-auto w-[300px] shrink-0 sm:w-[320px] ${className}`}>
       <div className="rounded-[52px] bg-[#1a1a1d] p-[10px] shadow-[0_50px_100px_-20px_rgba(0,0,0,.5),inset_0_0_0_2px_#3a3a3f]">
@@ -57,7 +59,7 @@ export function Phone({
                 <div className="min-w-0 flex-1">
                   <div className="flex justify-between text-[13px] font-semibold">
                     <span className="truncate">{toast.title}</span>
-                    <span className="text-[11px] font-normal text-black/50">now</span>
+                    <span className="text-[11px] font-normal text-black/50">{now}</span>
                   </div>
                   <div className="text-[13px] leading-snug text-black/75">{toast.body}</div>
                 </div>
@@ -73,6 +75,7 @@ export function Phone({
 }
 
 export function WalletStack({ children, platform = "apple" }: { children: React.ReactNode; platform?: "apple" | "google" }) {
+  const t = useT();
   if (platform === "google") {
     return (
       <div className="min-h-full bg-[#1f1f1f] px-4 pb-10">
@@ -80,7 +83,7 @@ export function WalletStack({ children, platform = "apple" }: { children: React.
           <span className="text-[20px] font-normal">Wallet</span>
           <span className="grid size-8 place-items-center rounded-full bg-[#a8c7fa] text-[13px] font-semibold text-[#062e6f]">L</span>
         </div>
-        <div className="mb-3 h-11 rounded-2xl bg-gradient-to-r from-[#0f3b8c] to-[#1a73e8] px-4 pt-2.5 text-[12px] text-white/90">Debit •••• 4021</div>
+        <div className="mb-3 h-11 rounded-2xl bg-gradient-to-r from-[#0f3b8c] to-[#1a73e8] px-4 pt-2.5 text-[12px] text-white/90">{t("Debit", "Débito")} •••• 4021</div>
         {children}
       </div>
     );
@@ -93,7 +96,7 @@ export function WalletStack({ children, platform = "apple" }: { children: React.
       </div>
       <div className="relative mt-2">
         <div className="h-12 rounded-t-[14px] bg-gradient-to-br from-zinc-600 to-zinc-800 px-4 pt-2.5 text-[12px] font-semibold text-white/80">Apple Card</div>
-        <div className="-mt-4 h-12 rounded-t-[14px] bg-gradient-to-br from-sky-700 to-indigo-800 px-4 pt-2.5 text-[12px] font-semibold text-white/80">Boarding pass · MAD → CDG</div>
+        <div className="-mt-4 h-12 rounded-t-[14px] bg-gradient-to-br from-sky-700 to-indigo-800 px-4 pt-2.5 text-[12px] font-semibold text-white/80">{t("Boarding pass", "Tarjeta de embarque")} · MAD → CDG</div>
         <div className="-mt-4">{children}</div>
       </div>
     </div>

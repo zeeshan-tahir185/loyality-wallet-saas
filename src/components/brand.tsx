@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useT } from "@/lib/i18n";
 
 export const BRAND = "LoopWallet";
 
@@ -17,6 +20,7 @@ export function Logo({ dark = false, href = "/" }: { dark?: boolean; href?: stri
 }
 
 export function AppleWalletBadge({ onClick, small = false }: { onClick?: () => void; small?: boolean }) {
+  const t = useT();
   return (
     <button
       onClick={onClick}
@@ -30,7 +34,7 @@ export function AppleWalletBadge({ onClick, small = false }: { onClick?: () => v
         <path d="M1 15h9c2 0 3 3 6 3s4-3 6-3h9v4a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4z" fill="#d9d9d9" />
       </svg>
       <span className="leading-none">
-        <span className="block text-[9px] opacity-80">Add to</span>
+        <span className="block text-[9px] opacity-80">{t("Add to", "Añadir a")}</span>
         <span className={`block font-semibold ${small ? "text-[13px]" : "text-[15px]"}`}>Apple Wallet</span>
       </span>
     </button>
@@ -38,6 +42,7 @@ export function AppleWalletBadge({ onClick, small = false }: { onClick?: () => v
 }
 
 export function GoogleWalletBadge({ onClick, small = false }: { onClick?: () => void; small?: boolean }) {
+  const t = useT();
   return (
     <button
       onClick={onClick}
@@ -49,7 +54,7 @@ export function GoogleWalletBadge({ onClick, small = false }: { onClick?: () => 
         <path d="M3 12h18v3H3z" fill="#34a853" />
         <path d="M3 15h18v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z" fill="#4285f4" />
       </svg>
-      <span className={`font-medium ${small ? "text-[12px]" : "text-[14px]"}`}>Add to Google Wallet</span>
+      <span className={`font-medium ${small ? "text-[12px]" : "text-[14px]"}`}>{t("Add to Google Wallet", "Añadir a Google Wallet")}</span>
     </button>
   );
 }

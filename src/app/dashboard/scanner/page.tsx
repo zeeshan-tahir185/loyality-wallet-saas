@@ -9,9 +9,14 @@ import { ApplePass } from "@/components/pass";
 import { PageHead } from "@/components/ui";
 import { addVisit, redeemReward } from "@/lib/store";
 import { useCurrentBusiness } from "@/lib/hooks";
+import { useLang, useT } from "@/lib/i18n";
 
 export default function ScannerPage() {
   const { db, business } = useCurrentBusiness();
+  const t = useT();
+  const lang = useLang();
+  const langRef = useRef(lang);
+  langRef.current = lang;
   const [selected, setSelected] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [spend, setSpend] = useState(20);
@@ -56,7 +61,8 @@ export default function ScannerPage() {
             stop();
             return;
           }
-          setScanError(c ? "This card belongs to another business." : "Not a loyalty card QR.");
+          const es = langRef.current === "es";
+          setScanError(c ? (es ? "Esta tarjeta es de otro negocio." : "This card belongs to another business.") : es ? "No es un QR de tarjeta de fidelidad." : "Not a loyalty card QR.");
         }
       }
       raf = requestAnimationFrame(tick);
@@ -101,18 +107,18 @@ export default function ScannerPage() {
     const res = addVisit(cust.id, "staff", p.type === "points" ? spend : 0);
     if (!res) return;
     if (res.rewardUnlocked) {
-      setFlash("Reward unlocked! 🎉");
+      setFlash(t("Reward unlocked! 🎉", "¡Recompensa desbloqueada! 🎉"));
       setHighlight(-1);
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.4 } });
     } else {
       setHighlight(res.customer.stamps - 1);
-      setFlash(p.type === "stamps" ? `Stamp added · ${res.customer.stamps}/${p.stampsRequired}` : `+${p.pointsPerVisit + spend * p.pointsPerEuro} points`);
+      setFlash(p.type === "stamps" ? `${t("Stamp added", "Sello añadido")} · ${res.customer.stamps}/${p.stampsRequired}` : `+${p.pointsPerVisit + spend * p.pointsPerEuro} ${t("points", "puntos")}`);
     }
   };
 
   return (
     <>
-      <PageHead title="Scanner" sub="Scan a customer's wallet card to add stamps, points or redeem rewards." />
+      <PageHead title={t("Scanner", "Escáner")} sub={t("Scan a customer's wallet card to add stamps, points or redeem rewards.", "Escanea la tarjeta del cliente para añadir sellos o puntos y canjear recompensas.")} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
@@ -136,11 +142,11 @@ export default function ScannerPage() {
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white">
                   {cam === "denied" ? <CameraOff size={36} className="text-white/60" /> : <Camera size={36} className="text-lime" />}
-                  <div className="mt-3 text-lg font-semibold">{cam === "denied" ? "Camera not available" : "Scan with this device's camera"}</div>
+                  <div className="mt-3 text-lg font-semibold">{cam === "denied" ? t("Camera not available", "Cámara no disponible") : t("Scan with this device's camera", "Escanea con la cámara de este dispositivo")}</div>
                   <div className="mt-1 max-w-sm text-sm text-white/60">
-                    {cam === "denied" ? "Allow camera access in your browser, or find the customer by name below." : "Works on any phone, tablet or laptop with a camera. No app needed."}
+                    {cam === "denied" ? t("Allow camera access in your browser, or find the customer by name below.", "Permite el acceso a la cámara en tu navegador o busca al cliente por su nombre.") : t("Works on any phone, tablet or laptop with a camera. No app needed.", "Funciona en cualquier móvil, tablet u ordenador con cámara. Sin apps.")}
                   </div>
-                  <button onClick={start} className="btn-lime mt-5 px-6 py-3"><Camera size={18} /> Start camera</button>
+                  <button onClick={start} className="btn-lime mt-5 px-6 py-3"><Camera size={18} /> {t("Start camera", "Activar cámara")}</button>
                 </div>
               )}
             </div>
@@ -149,7 +155,7 @@ export default function ScannerPage() {
           <div className="card p-5">
             <div className="relative">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
-              <input className="input pl-10" placeholder="Or search by name, phone or card code…" value={q} onChange={(e) => setQ(e.target.value)} />
+              <input className="input pl-10" placeholder={t("Or search by name, phone or card code…", "O busca por nombre, teléfono o código…")} value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               {results.map((c) => (
@@ -158,7 +164,7 @@ export default function ScannerPage() {
                     <span className="grid size-9 place-items-center rounded-full bg-paper text-xs font-semibold">{c.name.split(" ").map((x) => x[0]).join("")}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{c.name}</span>
-                      <span className="block text-xs text-muted">{p.type === "stamps" ? `${c.stamps}/${p.stampsRequired} stamps` : `${c.points} pts`} · {c.phone}</span>
+                      <span className="block text-xs text-muted">{p.type === "stamps" ? `${c.stamps}/${p.stampsRequired} ${t("stamps", "sellos")}` : `${c.points} pts`} · {c.phone}</span>
                     </span>
                   </button>
                 </li>
@@ -172,7 +178,7 @@ export default function ScannerPage() {
             {cust ? (
               <motion.div key={cust.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="card p-5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700"><Check size={16} /> Customer found</div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700"><Check size={16} /> {t("Customer found", "Cliente encontrado")}</div>
                   <button onClick={() => setSelected(null)} className="text-muted hover:text-ink"><X size={18} /></button>
                 </div>
                 <div className="mt-4">
@@ -180,16 +186,16 @@ export default function ScannerPage() {
                 </div>
                 {p.type === "points" && (
                   <div className="mt-4 flex items-center gap-2">
-                    <span className="text-sm font-medium">Spent</span>
+                    <span className="text-sm font-medium">{t("Spent", "Gasto")}</span>
                     {[10, 20, 50].map((v) => (
                       <button key={v} onClick={() => setSpend(v)} className={`rounded-lg border px-3 py-1.5 text-sm font-semibold ${spend === v ? "border-ink bg-ink text-white" : "border-line"}`}>€{v}</button>
                     ))}
                   </div>
                 )}
-                <button onClick={add} className="btn-lime mt-4 w-full py-3.5 text-base"><Zap size={18} /> {p.type === "stamps" ? "Add stamp" : "Add points"}</button>
+                <button onClick={add} className="btn-lime mt-4 w-full py-3.5 text-base"><Zap size={18} /> {p.type === "stamps" ? t("Add stamp", "Añadir sello") : t("Add points", "Añadir puntos")}</button>
                 {cust.rewardsEarned > cust.rewardsRedeemed && (
-                  <button onClick={() => { redeemReward(cust.id, p.type === "points" ? [...p.tiers].reverse().find((t) => t.points <= cust.points)?.points : undefined); setFlash("Reward redeemed ✓"); }} className="btn-ink mt-2 w-full py-3.5 text-base">
-                    <Gift size={18} /> Redeem reward ({cust.rewardsEarned - cust.rewardsRedeemed})
+                  <button onClick={() => { redeemReward(cust.id, p.type === "points" ? [...p.tiers].reverse().find((t) => t.points <= cust.points)?.points : undefined); setFlash(t("Reward redeemed ✓", "Recompensa canjeada ✓")); }} className="btn-ink mt-2 w-full py-3.5 text-base">
+                    <Gift size={18} /> {t("Redeem reward", "Canjear recompensa")} ({cust.rewardsEarned - cust.rewardsRedeemed})
                   </button>
                 )}
                 <AnimatePresence>
@@ -204,8 +210,8 @@ export default function ScannerPage() {
               <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card grid min-h-[300px] place-items-center p-8 text-center">
                 <div>
                   <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-paper"><Camera size={24} /></div>
-                  <div className="mt-3 font-semibold">No customer selected</div>
-                  <div className="mt-1 text-sm text-muted">Scan a wallet card or pick a customer from the list.</div>
+                  <div className="mt-3 font-semibold">{t("No customer selected", "Ningún cliente seleccionado")}</div>
+                  <div className="mt-1 text-sm text-muted">{t("Scan a wallet card or pick a customer from the list.", "Escanea una tarjeta o elige un cliente de la lista.")}</div>
                 </div>
               </motion.div>
             )}

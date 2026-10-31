@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Gift } from "lucide-react";
 import { industry } from "@/lib/industries";
+import { useT } from "@/lib/i18n";
 import type { Business, Customer, Program } from "@/lib/types";
 
 export const qrPayload = (c: Pick<Customer, "id">) => `LW1:${c.id}`;
@@ -80,6 +81,7 @@ function nextTier(program: Program, points: number) {
 }
 
 function PointsMeter({ program, points }: { program: Program; points: number }) {
+  const tr = useT();
   const t = nextTier(program, points);
   const pct = Math.min(100, (points / t.points) * 100);
   return (
@@ -88,7 +90,7 @@ function PointsMeter({ program, points }: { program: Program; points: number }) 
         <motion.span key={points} initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl font-semibold tabular-nums tracking-tight">
           {points}
         </motion.span>
-        <span className="pb-1 text-[11px] opacity-70">{Math.max(0, t.points - points)} pts to {t.name}</span>
+        <span className="pb-1 text-right text-[11px] opacity-70">{Math.max(0, t.points - points)} {tr("pts to", "pts para")} {t.name}</span>
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ background: `color-mix(in srgb, ${program.fg} 18%, transparent)` }}>
         <motion.div className="h-full rounded-full" style={{ background: program.accent }} animate={{ width: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
@@ -116,6 +118,7 @@ type PassProps = {
 };
 
 export function ApplePass({ business, customer, highlight, showQR = true }: PassProps) {
+  const t = useT();
   const p = business.program;
   const available = customer.rewardsEarned - customer.rewardsRedeemed;
   return (
@@ -129,7 +132,7 @@ export function ApplePass({ business, customer, highlight, showQR = true }: Pass
           <span className="truncate text-[15px] font-semibold">{business.name}</span>
         </div>
         <div className="text-right">
-          <Label>{p.type === "stamps" ? "Stamps" : "Points"}</Label>
+          <Label>{p.type === "stamps" ? t("Stamps", "Sellos") : t("Points", "Puntos")}</Label>
           <div className="text-lg font-semibold tabular-nums leading-tight">
             {p.type === "stamps" ? `${customer.stamps}/${p.stampsRequired}` : customer.points}
           </div>
@@ -142,11 +145,11 @@ export function ApplePass({ business, customer, highlight, showQR = true }: Pass
 
       <div className="mt-3 flex justify-between gap-3">
         <div className="min-w-0">
-          <Label>Reward</Label>
+          <Label>{t("Reward", "Recompensa")}</Label>
           <div className="text-[13px] font-medium leading-snug">{p.type === "stamps" ? p.stampReward : nextTier(p, customer.points).name}</div>
         </div>
         <div className="shrink-0 text-right">
-          <Label>Member</Label>
+          <Label>{t("Member", "Miembro")}</Label>
           <div className="whitespace-nowrap text-[13px] font-medium">{customer.name}</div>
         </div>
       </div>
@@ -158,7 +161,7 @@ export function ApplePass({ business, customer, highlight, showQR = true }: Pass
           className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-semibold"
           style={{ background: p.accent, color: p.bg }}
         >
-          <Gift size={14} /> {available} reward{available > 1 ? "s" : ""} ready to redeem
+          <Gift size={14} /> {available > 1 ? t(`${available} rewards ready to redeem`, `${available} recompensas listas para canjear`) : t("1 reward ready to redeem", "1 recompensa lista para canjear")}
         </motion.div>
       )}
 
@@ -175,6 +178,7 @@ export function ApplePass({ business, customer, highlight, showQR = true }: Pass
 }
 
 export function GooglePass({ business, customer, highlight, showQR = true }: PassProps) {
+  const t = useT();
   const p = business.program;
   const available = customer.rewardsEarned - customer.rewardsRedeemed;
   return (
@@ -184,17 +188,17 @@ export function GooglePass({ business, customer, highlight, showQR = true }: Pas
         <span className="truncate text-[14px] font-medium">{business.name}</span>
       </div>
       <div className="px-4 pt-3">
-        <div className="text-[11px] opacity-70">Loyalty card</div>
+        <div className="text-[11px] opacity-70">{t("Loyalty card", "Tarjeta de fidelidad")}</div>
         <div className="text-[22px] font-medium leading-tight">{customer.name}</div>
       </div>
       <div className="grid grid-cols-2 gap-3 px-4 pt-3">
         <div>
-          <div className="text-[11px] opacity-70">{p.type === "stamps" ? "Stamps" : "Points"}</div>
-          <div className="text-[15px] font-medium tabular-nums">{p.type === "stamps" ? `${customer.stamps} of ${p.stampsRequired}` : customer.points}</div>
+          <div className="text-[11px] opacity-70">{p.type === "stamps" ? t("Stamps", "Sellos") : t("Points", "Puntos")}</div>
+          <div className="text-[15px] font-medium tabular-nums">{p.type === "stamps" ? `${customer.stamps} ${t("of", "de")} ${p.stampsRequired}` : customer.points}</div>
         </div>
         <div className="text-right">
-          <div className="text-[11px] opacity-70">Rewards</div>
-          <div className="text-[15px] font-medium">{available > 0 ? `${available} available` : "None"}</div>
+          <div className="text-[11px] opacity-70">{t("Rewards", "Recompensas")}</div>
+          <div className="text-[15px] font-medium">{available > 0 ? `${available} ${t("available", "disponible")}` : t("None", "Ninguna")}</div>
         </div>
       </div>
       {showQR && (

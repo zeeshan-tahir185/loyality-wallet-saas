@@ -7,12 +7,14 @@ import { BizMark } from "@/components/pass";
 import { PageHead } from "@/components/ui";
 import { updateBusiness } from "@/lib/store";
 import { counterCode, useCurrentBusiness, useNow } from "@/lib/hooks";
+import { useT } from "@/lib/i18n";
 
 export default function QrPage() {
   const { db, business } = useCurrentBusiness();
   const now = useNow(1000);
   const [origin, setOrigin] = useState("");
   const [review, setReview] = useState("");
+  const t = useT();
   useEffect(() => setOrigin(window.location.origin), []);
   useEffect(() => setReview(business?.googleReviewUrl ?? ""), [business?.id]);
   if (!db || !business || !origin) return null;
@@ -27,13 +29,13 @@ export default function QrPage() {
 
   return (
     <>
-      <PageHead title="QR codes & Reviews" sub="Everything you need at the counter." />
+      <PageHead title={t("QR codes", "Códigos QR")} sub={t("Everything you need at the counter.", "Todo lo que necesitas en el mostrador.")} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <QrCard
           id="qr-counter"
-          title="Counter QR"
-          sub="Customers scan it to collect a stamp themselves. The code rotates every 30 seconds."
+          title={t("Counter QR", "QR de mostrador")}
+          sub={t("Customers scan it to collect a stamp themselves. The code rotates every 30 seconds.", "El cliente lo escanea para sumar su sello. El código cambia cada 30 segundos.")}
           icon={<RefreshCw size={16} />}
           value={counterUrl}
           bg={p.bg}
@@ -46,48 +48,48 @@ export default function QrPage() {
           }
           label={business.name}
           program={p}
-          hint="Show it on a tablet at the till for best results."
+          hint={t("Show it on a tablet at the till for best results.", "Para mejores resultados, muéstralo en una tablet junto a la caja.")}
         />
         <QrCard
           id="qr-join"
-          title="Join QR"
-          sub="Print it on flyers, menus or the window. New customers get their card in seconds."
+          title={t("Join QR", "QR de alta")}
+          sub={t("Print it on flyers, menus or the window. New customers get their card in seconds.", "Imprímelo en flyers, cartas o el escaparate. Los nuevos clientes tienen su tarjeta en segundos.")}
           icon={<UserPlus size={16} />}
           value={joinUrl}
           bg="#ffffff"
           fg="#0c0c10"
-          label="Join our loyalty club"
+          label={t("Join our loyalty club", "Únete a nuestro club")}
           program={p}
           link={joinUrl}
         />
         <QrCard
           id="qr-review"
-          title="Google review QR"
-          sub="Sends happy customers straight to your Google review page."
+          title={t("Google review QR", "QR de reseñas Google")}
+          sub={t("Sends happy customers straight to your Google review page.", "Lleva a tus clientes directamente a tu página de reseñas de Google.")}
           icon={<Star size={16} />}
           value={review || "https://g.page"}
           bg="#fffbeb"
           fg="#78350f"
-          label="Loved your visit? Review us"
+          label={t("Loved your visit? Review us", "¿Te ha gustado? Déjanos tu reseña")}
           program={p}
           link={review}
         >
           <div className="mt-4">
-            <label className="text-xs font-medium text-muted">Your Google review link</label>
+            <label className="text-xs font-medium text-muted">{t("Your Google review link", "Tu enlace de reseñas de Google")}</label>
             <div className="mt-1 flex gap-2">
               <input className="input text-xs" value={review} onChange={(e) => setReview(e.target.value)} />
-              <button onClick={() => updateBusiness(business.id, { googleReviewUrl: review })} className="btn-ink px-3.5">Save</button>
+              <button onClick={() => updateBusiness(business.id, { googleReviewUrl: review })} className="btn-ink px-3.5">{t("Save", "Guardar")}</button>
             </div>
           </div>
         </QrCard>
       </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-3">
-        <Stat k="Members who left a review" v={`${reviewed}`} />
-        <Stat k="Review rate" v={`${members.length ? Math.round((reviewed / members.length) * 100) : 0}%`} />
-        <Stat k="Shown on every wallet card" v="Yes" />
+        <Stat k={t("Customers who opened the review link", "Clientes que abrieron el enlace")} v={`${reviewed}`} />
+        <Stat k={t("Review click rate", "Tasa de clics en reseñas")} v={`${members.length ? Math.round((reviewed / members.length) * 100) : 0}%`} />
+        <Stat k={t("Shown on every wallet card", "Visible en cada tarjeta")} v={t("Yes", "Sí")} />
       </div>
-      <p className="mt-4 text-sm text-muted">Google&apos;s policy doesn&apos;t allow rewarding reviews, so the review prompt is kept separate from stamps and points.</p>
+      <p className="mt-4 text-sm text-muted">{t("Google's policy doesn't allow rewarding reviews, so the review prompt is kept separate from stamps and points.", "La política de Google no permite premiar las reseñas, por eso la invitación a reseñar va separada de los sellos y puntos.")}</p>
     </>
   );
 }
@@ -99,6 +101,7 @@ function QrCard({
   program: Parameters<typeof BizMark>[0]["program"]; footer?: React.ReactNode; link?: string; hint?: string; children?: React.ReactNode;
 }) {
   const [copied, setCopied] = useState(false);
+  const t = useT();
   const download = () => {
     const c = document.getElementById(id) as HTMLCanvasElement | null;
     if (!c) return;

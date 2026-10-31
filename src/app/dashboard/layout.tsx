@@ -13,6 +13,7 @@ import {
   QrCode,
   ScanLine,
   Shield,
+  Star,
   Users,
   X,
 } from "lucide-react";
@@ -20,18 +21,21 @@ import { Logo } from "@/components/brand";
 import { BizMark } from "@/components/pass";
 import { Loading } from "@/components/ui";
 import { setCurrentBusiness, useCurrentBusiness } from "@/lib/hooks";
+import { LangSwitch, useT } from "@/lib/i18n";
 
 const NAV = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/scanner", label: "Scanner", icon: ScanLine },
-  { href: "/dashboard/customers", label: "Customers", icon: Users },
-  { href: "/dashboard/card", label: "Card designer", icon: Palette },
-  { href: "/dashboard/qr", label: "QR & Reviews", icon: QrCode },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
-];
+  { href: "/dashboard", label: ["Overview", "Resumen"], icon: LayoutDashboard },
+  { href: "/dashboard/scanner", label: ["Scanner", "Escáner"], icon: ScanLine },
+  { href: "/dashboard/customers", label: ["Customers", "Clientes"], icon: Users },
+  { href: "/dashboard/card", label: ["Card designer", "Diseño de tarjeta"], icon: Palette },
+  { href: "/dashboard/reviews", label: ["Google Reviews", "Reseñas Google"], icon: Star },
+  { href: "/dashboard/qr", label: ["QR codes", "Códigos QR"], icon: QrCode },
+  { href: "/dashboard/billing", label: ["Billing", "Facturación"], icon: CreditCard },
+] as const;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
+  const t = useT();
   const { db, business } = useCurrentBusiness();
   const [open, setOpen] = useState(false);
   const [picker, setPicker] = useState(false);
@@ -53,7 +57,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </button>
         {picker && (
           <div className="absolute inset-x-3 top-full z-20 mt-1 max-h-80 overflow-y-auto rounded-xl border border-line bg-white p-1 shadow-xl">
-            <div className="px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted">Switch business (demo)</div>
+            <div className="px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted">{t("Switch business (demo)", "Cambiar de negocio (demo)")}</div>
             {db.businesses.map((b) => (
               <button
                 key={b.id}
@@ -79,17 +83,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active ? "bg-ink text-white" : "text-zinc-600 hover:bg-white hover:text-ink"}`}
             >
-              <n.icon size={18} className={active ? "text-lime" : ""} /> {n.label}
+              <n.icon size={18} className={active ? "text-lime" : ""} /> {t(n.label[0], n.label[1])}
             </Link>
           );
         })}
       </nav>
       <div className="space-y-1 p-3">
+        <div className="flex items-center justify-between px-3 pb-2 text-sm text-zinc-600">
+          {t("Language", "Idioma")} <LangSwitch />
+        </div>
         <Link href={`/c/${business.slug}`} target="_blank" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 hover:bg-white">
-          <ExternalLink size={18} /> Customer card page
+          <ExternalLink size={18} /> {t("Customer card page", "Página del cliente")}
         </Link>
         <Link href="/admin" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 hover:bg-white">
-          <Shield size={18} /> Platform admin
+          <Shield size={18} /> {t("Platform admin", "Admin de la plataforma")}
         </Link>
         <div className="mt-2 flex items-center gap-3 rounded-xl bg-white p-3">
           <div className="grid size-9 place-items-center rounded-full bg-lime text-sm font-bold">{business.owner.split(" ").map((x) => x[0]).join("")}</div>

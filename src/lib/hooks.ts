@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { DEMO_BUSINESS_ID, useDB } from "./store";
+import { type Lang, locale } from "./i18n";
 
 const CUR = "loopwallet-current-biz";
 const subs = new Set<() => void>();
@@ -45,16 +46,17 @@ export function useNow(interval = 30_000) {
   return now;
 }
 
-export function timeAgo(iso: string, now = Date.now()) {
+export function timeAgo(iso: string, now = Date.now(), lang: Lang = "es") {
+  const es = lang === "es";
   const s = Math.max(0, Math.round((now - new Date(iso).getTime()) / 1000));
-  if (s < 45) return "just now";
+  if (s < 45) return es ? "ahora mismo" : "just now";
   const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
+  if (m < 60) return es ? `hace ${m} min` : `${m} min ago`;
   const h = Math.round(m / 60);
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return es ? `hace ${h} h` : `${h}h ago`;
   const d = Math.round(h / 24);
-  if (d < 30) return `${d}d ago`;
-  return new Date(iso).toLocaleDateString();
+  if (d < 30) return es ? `hace ${d} d` : `${d}d ago`;
+  return new Date(iso).toLocaleDateString(locale(lang));
 }
 
 export function counterCode(businessId: string, slot = Math.floor(Date.now() / 30_000)) {

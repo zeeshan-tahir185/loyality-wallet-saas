@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { INDUSTRIES } from "@/lib/industries";
+import { INDUSTRIES, industryExample, industryLabel, programFor } from "@/lib/industries";
+import { useLang, useT } from "@/lib/i18n";
 import { ApplePass } from "./pass";
 
 const NAMES: Record<string, [string, string]> = {
@@ -17,8 +18,10 @@ const NAMES: Record<string, [string, string]> = {
 };
 
 export function IndustryShowcase() {
+  const lang = useLang();
+  const t = useT();
   const [active, setActive] = useState(INDUSTRIES[0].key);
-  const ind = INDUSTRIES.find((i) => i.key === active)!;
+  const ind = { ...INDUSTRIES.find((i) => i.key === active)!, program: programFor(active, lang) };
   const [biz, person] = NAMES[active];
 
   return (
@@ -33,31 +36,34 @@ export function IndustryShowcase() {
                 active === i.key ? "border-ink bg-ink text-white" : "border-line bg-white hover:border-zinc-400"
               }`}
             >
-              <i.icon size={16} /> {i.label}
+              <i.icon size={16} /> {industryLabel(i.key, lang)}
             </button>
           ))}
         </div>
         <AnimatePresence mode="wait">
           <motion.div key={active} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mt-8">
-            <div className="text-sm font-medium uppercase tracking-widest text-muted">{ind.program.type === "stamps" ? "Stamp card" : "Points program"}</div>
-            <h3 className="mt-2 font-display text-4xl leading-tight sm:text-5xl">“{ind.example}”</h3>
+            <div className="text-sm font-medium uppercase tracking-widest text-muted">{ind.program.type === "stamps" ? t("Stamp card", "Tarjeta de sellos") : t("Points program", "Programa de puntos")}</div>
+            <h3 className="mt-2 font-display text-4xl leading-tight sm:text-5xl">“{industryExample(active, lang)}”</h3>
             <div className="mt-6 grid max-w-lg grid-cols-3 gap-3 text-sm">
               {ind.program.type === "stamps" ? (
                 <>
-                  <Stat k="Stamps" v={`${ind.program.stampsRequired}`} />
-                  <Stat k="Reward" v={ind.program.stampReward} />
-                  <Stat k="Welcome" v={ind.program.welcomeBonus ? `${ind.program.welcomeBonus} free stamp` : "None"} />
+                  <Stat k={t("Stamps", "Sellos")} v={`${ind.program.stampsRequired}`} />
+                  <Stat k={t("Reward", "Recompensa")} v={ind.program.stampReward} />
+                  <Stat k={t("Welcome", "Bienvenida")} v={ind.program.welcomeBonus ? t(`${ind.program.welcomeBonus} free stamp`, `${ind.program.welcomeBonus} sello gratis`) : t("None", "Ninguno")} />
                 </>
               ) : (
                 <>
-                  <Stat k="Per visit" v={ind.program.pointsPerVisit ? `${ind.program.pointsPerVisit} pts` : "None"} />
-                  <Stat k="Per €1" v={`${ind.program.pointsPerEuro} pts`} />
-                  <Stat k="Top reward" v={ind.program.tiers[2].name} />
+                  <Stat k={t("Per visit", "Por visita")} v={ind.program.pointsPerVisit ? `${ind.program.pointsPerVisit} pts` : t("None", "Ninguno")} />
+                  <Stat k={t("Per €1", "Por 1 €")} v={`${ind.program.pointsPerEuro} pts`} />
+                  <Stat k={t("Top reward", "Mejor recompensa")} v={ind.program.tiers[2].name} />
                 </>
               )}
             </div>
             <p className="mt-6 max-w-lg text-muted">
-              Start from a ready-made template, then change colours, rules and rewards from the dashboard in a couple of clicks.
+              {t(
+                "Start from a ready-made template, then change colours, rules and rewards from the dashboard in a couple of clicks.",
+                "Empieza con una plantilla lista y cambia colores, reglas y recompensas desde el panel en un par de clics.",
+              )}
             </p>
           </motion.div>
         </AnimatePresence>

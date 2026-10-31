@@ -1,4 +1,4 @@
-import { industry } from "./industries";
+import { programFor } from "./industries";
 import type { Activity, Business, Customer, DB, IndustryKey } from "./types";
 
 function rng(seed: number) {
@@ -45,7 +45,7 @@ const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 export const DEMO_BUSINESS_ID = "biz_0";
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 export function createSeed(now = Date.now()): DB {
   const r = rng(42);
@@ -60,7 +60,7 @@ export function createSeed(now = Date.now()): DB {
     city,
     owner,
     email: `${slugify(owner).split("-")[0]}@${slugify(name).replace(/-/g, "")}.com`,
-    program: structuredClone(industry(ind).program),
+    program: programFor(ind, "es"),
     googleReviewUrl: `https://g.page/r/${slugify(name)}/review`,
     plan,
     createdAt: new Date(now - ageDays * day).toISOString(),

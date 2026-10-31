@@ -9,6 +9,7 @@ import {
   Sparkles,
   UtensilsCrossed,
 } from "lucide-react";
+import type { Lang } from "./i18n";
 import type { IndustryKey, Program } from "./types";
 
 export type Industry = {
@@ -190,3 +191,80 @@ export const INDUSTRIES: Industry[] = [
 
 export const industry = (key: IndustryKey) =>
   INDUSTRIES.find((i) => i.key === key) ?? INDUSTRIES[0];
+
+type EsText = { label: string; example: string; reward: string; tiers: [string, string, string]; terms: string };
+
+const ES: Record<IndustryKey, EsText> = {
+  cafe: {
+    label: "Cafetería",
+    example: "Compra 9 cafés y el 10º es gratis",
+    reward: "Café gratis a elegir",
+    tiers: ["Bollería gratis", "Café gratis", "Desayuno para dos"],
+    terms: "Un sello por compra. Válido solo en tienda.",
+  },
+  barber: {
+    label: "Barbería",
+    example: "Cada 6º corte es gratis",
+    reward: "Corte de pelo gratis",
+    tiers: ["Arreglo de barba gratis", "Corte gratis", "Corte + afeitado con toalla caliente"],
+    terms: "Un sello por corte pagado.",
+  },
+  gym: {
+    label: "Gimnasio",
+    example: "Gana puntos en cada entrenamiento",
+    reward: "Sesión de entrenador personal gratis",
+    tiers: ["Batido de proteínas", "Sesión de PT gratis", "1 mes gratis"],
+    terms: "Puntos por cada visita y por cada € gastado.",
+  },
+  salon: {
+    label: "Salón de belleza",
+    example: "Puntos en cada tratamiento",
+    reward: "Manicura gratis",
+    tiers: ["Nail art gratis", "Manicura gratis", "Día de spa"],
+    terms: "Puntos en cada tratamiento y producto.",
+  },
+  clothing: {
+    label: "Tienda de ropa",
+    example: "1 € gastado = 1 punto",
+    reward: "Vale de 20 €",
+    tiers: ["5 € de descuento", "15 € de descuento", "Vale de 40 €"],
+    terms: "1 punto por cada 1 € gastado. Vales válidos 90 días.",
+  },
+  perfume: {
+    label: "Perfumería",
+    example: "Consigue 5 sellos y llévate un set de muestras",
+    reward: "Set de muestras de lujo",
+    tiers: ["Muestra de perfume", "Envoltorio regalo + muestra", "Eau de parfum 30 ml"],
+    terms: "Un sello por compra superior a 30 €.",
+  },
+  restaurant: {
+    label: "Restaurante",
+    example: "8 visitas = cena gratis",
+    reward: "Plato principal gratis",
+    tiers: ["Postre gratis", "Entrante gratis", "Cena para dos"],
+    terms: "Un sello por mesa y visita.",
+  },
+  carwash: {
+    label: "Lavado de coches",
+    example: "Cada 5º lavado es gratis",
+    reward: "Lavado premium gratis",
+    tiers: ["Ambientador gratis", "Lavado básico gratis", "Limpieza completa"],
+    terms: "Un sello por lavado.",
+  },
+};
+
+export const industryLabel = (key: IndustryKey, lang: Lang) => (lang === "es" ? ES[key].label : industry(key).label);
+
+export const industryExample = (key: IndustryKey, lang: Lang) => (lang === "es" ? ES[key].example : industry(key).example);
+
+export function programFor(key: IndustryKey, lang: Lang): Program {
+  const base = structuredClone(industry(key).program);
+  if (lang === "en") return base;
+  const es = ES[key];
+  return {
+    ...base,
+    stampReward: es.reward,
+    terms: es.terms,
+    tiers: base.tiers.map((t, i) => ({ ...t, name: es.tiers[i] })),
+  };
+}

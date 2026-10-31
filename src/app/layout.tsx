@@ -7,16 +7,16 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const display = Instrument_Serif({ variable: "--font-display", subsets: ["latin"], weight: "400", style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
-  title: "LoopWallet | Digital loyalty cards for Apple & Google Wallet",
+  title: "LoopWallet | Tarjetas de fidelidad para Apple Wallet y Google Wallet",
   description:
-    "Launch a digital stamp or points card in minutes. Customers save it to Apple Wallet or Google Wallet, collect stamps by QR, and come back more often.",
+    "Lanza tu tarjeta de sellos o puntos en minutos. Tus clientes la guardan en Apple Wallet o Google Wallet, suman sellos con un QR y vuelven más a menudo.",
 };
 
 export const viewport: Viewport = { themeColor: "#0c0c10" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}>
+    <html lang="es" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full font-sans">{children}</body>
     </html>
   );

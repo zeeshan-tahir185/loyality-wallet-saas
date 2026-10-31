@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Check, RotateCcw, Save } from "lucide-react";
 import { ApplePass, GooglePass } from "@/components/pass";
 import { PageHead } from "@/components/ui";
-import { INDUSTRIES } from "@/lib/industries";
+import { INDUSTRIES, industryLabel, programFor } from "@/lib/industries";
+import { useLang, useT } from "@/lib/i18n";
 import { updateBusiness } from "@/lib/store";
 import { useCurrentBusiness } from "@/lib/hooks";
 import type { Business, Program } from "@/lib/types";
@@ -33,6 +34,8 @@ function Designer({ business }: { business: Business }) {
   const [prog, setProg] = useState<Program>(business.program);
   const [platform, setPlatform] = useState<"apple" | "google">("apple");
   const [saved, setSaved] = useState(false);
+  const t = useT();
+  const lang = useLang();
   const dirty = name !== business.name || JSON.stringify(prog) !== JSON.stringify(business.program);
   const set = (patch: Partial<Program>) => setProg((p) => ({ ...p, ...patch }));
 
@@ -54,42 +57,42 @@ function Designer({ business }: { business: Business }) {
   return (
     <>
       <PageHead
-        title="Card designer"
-        sub="Design the loyalty card your customers save to their wallet."
+        title={t("Card designer", "Diseño de tarjeta")}
+        sub={t("Design the loyalty card your customers save to their wallet.", "Diseña la tarjeta de fidelidad que tus clientes guardan en su wallet.")}
         actions={
           <>
-            <button disabled={!dirty} onClick={() => { setName(business.name); setProg(business.program); }} className="btn-ghost"><RotateCcw size={16} /> Discard</button>
-            <button disabled={!dirty && !saved} onClick={save} className="btn-ink">{saved ? <><Check size={16} /> Saved</> : <><Save size={16} /> Save & publish</>}</button>
+            <button disabled={!dirty} onClick={() => { setName(business.name); setProg(business.program); }} className="btn-ghost"><RotateCcw size={16} /> {t("Discard", "Descartar")}</button>
+            <button disabled={!dirty && !saved} onClick={save} className="btn-ink">{saved ? <><Check size={16} /> {t("Saved", "Guardado")}</> : <><Save size={16} /> {t("Save & publish", "Guardar y publicar")}</>}</button>
           </>
         }
       />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
-          <Section title="Start from a template" sub="Pre-filled rules and colours for your industry.">
+          <Section title={t("Start from a template", "Empieza con una plantilla")} sub={t("Pre-filled rules and colours for your industry.", "Reglas y colores pensados para tu sector.")}>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {INDUSTRIES.map((i) => (
                 <button
                   key={i.key}
-                  onClick={() => setProg({ ...i.program })}
+                  onClick={() => setProg(programFor(i.key, lang))}
                   className={`flex items-center gap-2 rounded-xl border p-3 text-left text-sm font-medium transition hover:border-zinc-400 ${prog.icon === i.key ? "border-ink ring-2 ring-ink/10" : "border-line"}`}
                 >
                   <span className="grid size-8 place-items-center rounded-lg" style={{ background: i.program.bg, color: i.program.accent }}><i.icon size={16} /></span>
-                  {i.label}
+                  {industryLabel(i.key, lang)}
                 </button>
               ))}
             </div>
           </Section>
 
-          <Section title="Program">
+          <Section title={t("Program", "Programa")}>
             <div className="grid gap-4">
-              <Field label="Business name"><input className="input" value={name} onChange={(e) => setName(e.target.value)} /></Field>
-              <Field label="Program type">
+              <Field label={t("Business name", "Nombre del negocio")}><input className="input" value={name} onChange={(e) => setName(e.target.value)} /></Field>
+              <Field label={t("Program type", "Tipo de programa")}>
                 <div className="grid grid-cols-2 gap-2">
-                  {(["stamps", "points"] as const).map((t) => (
-                    <button key={t} onClick={() => set({ type: t })} className={`rounded-xl border p-3 text-left ${prog.type === t ? "border-ink bg-ink text-white" : "border-line bg-white"}`}>
-                      <div className="font-semibold capitalize">{t === "stamps" ? "Stamp card" : "Points"}</div>
-                      <div className={`text-xs ${prog.type === t ? "text-white/60" : "text-muted"}`}>{t === "stamps" ? "Collect X stamps, get a reward" : "Points per visit / € with reward tiers"}</div>
+                  {(["stamps", "points"] as const).map((k) => (
+                    <button key={k} onClick={() => set({ type: k })} className={`rounded-xl border p-3 text-left ${prog.type === k ? "border-ink bg-ink text-white" : "border-line bg-white"}`}>
+                      <div className="font-semibold">{k === "stamps" ? t("Stamp card", "Tarjeta de sellos") : t("Points", "Puntos")}</div>
+                      <div className={`text-xs ${prog.type === k ? "text-white/60" : "text-muted"}`}>{k === "stamps" ? t("Collect X stamps, get a reward", "Junta X sellos y consigue un premio") : t("Points per visit / € with reward tiers", "Puntos por visita / € con niveles de premio")}</div>
                     </button>
                   ))}
                 </div>
@@ -97,12 +100,12 @@ function Designer({ business }: { business: Business }) {
 
               {prog.type === "stamps" ? (
                 <>
-                  <Field label={`Stamps needed for reward · ${prog.stampsRequired}`}>
+                  <Field label={`${t("Stamps needed for reward", "Sellos necesarios para el premio")} · ${prog.stampsRequired}`}>
                     <input type="range" min={3} max={15} value={prog.stampsRequired} onChange={(e) => set({ stampsRequired: +e.target.value })} className="w-full accent-[#0c0c10]" />
                   </Field>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Reward"><input className="input" value={prog.stampReward} onChange={(e) => set({ stampReward: e.target.value })} /></Field>
-                    <Field label="Welcome stamps">
+                    <Field label={t("Reward", "Recompensa")}><input className="input" value={prog.stampReward} onChange={(e) => set({ stampReward: e.target.value })} /></Field>
+                    <Field label={t("Welcome stamps", "Sellos de bienvenida")}>
                       <input type="number" min={0} max={3} className="input" value={prog.welcomeBonus} onChange={(e) => set({ welcomeBonus: Math.max(0, Math.min(3, +e.target.value)) })} />
                     </Field>
                   </div>
@@ -110,41 +113,41 @@ function Designer({ business }: { business: Business }) {
               ) : (
                 <>
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <Field label="Points per visit"><input type="number" min={0} className="input" value={prog.pointsPerVisit} onChange={(e) => set({ pointsPerVisit: +e.target.value })} /></Field>
-                    <Field label="Points per €1"><input type="number" min={0} className="input" value={prog.pointsPerEuro} onChange={(e) => set({ pointsPerEuro: +e.target.value })} /></Field>
-                    <Field label="Welcome points"><input type="number" min={0} className="input" value={prog.welcomeBonus} onChange={(e) => set({ welcomeBonus: +e.target.value })} /></Field>
+                    <Field label={t("Points per visit", "Puntos por visita")}><input type="number" min={0} className="input" value={prog.pointsPerVisit} onChange={(e) => set({ pointsPerVisit: +e.target.value })} /></Field>
+                    <Field label={t("Points per €1", "Puntos por 1 €")}><input type="number" min={0} className="input" value={prog.pointsPerEuro} onChange={(e) => set({ pointsPerEuro: +e.target.value })} /></Field>
+                    <Field label={t("Welcome points", "Puntos de bienvenida")}><input type="number" min={0} className="input" value={prog.welcomeBonus} onChange={(e) => set({ welcomeBonus: +e.target.value })} /></Field>
                   </div>
-                  <Field label="Reward tiers">
+                  <Field label={t("Reward tiers", "Niveles de recompensa")}>
                     <div className="space-y-2">
-                      {prog.tiers.map((t, i) => (
-                        <div key={t.id} className="flex gap-2">
-                          <input type="number" className="input w-28" value={t.points} onChange={(e) => set({ tiers: prog.tiers.map((x, j) => (j === i ? { ...x, points: +e.target.value } : x)) })} />
-                          <input className="input" value={t.name} onChange={(e) => set({ tiers: prog.tiers.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
+                      {prog.tiers.map((tier, i) => (
+                        <div key={tier.id} className="flex gap-2">
+                          <input type="number" className="input w-28" value={tier.points} onChange={(e) => set({ tiers: prog.tiers.map((x, j) => (j === i ? { ...x, points: +e.target.value } : x)) })} />
+                          <input className="input" value={tier.name} onChange={(e) => set({ tiers: prog.tiers.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
                         </div>
                       ))}
                     </div>
                   </Field>
                 </>
               )}
-              <Field label="Terms shown on the card"><input className="input" value={prog.terms} onChange={(e) => set({ terms: e.target.value })} /></Field>
+              <Field label={t("Terms shown on the card", "Condiciones en la tarjeta")}><input className="input" value={prog.terms} onChange={(e) => set({ terms: e.target.value })} /></Field>
             </div>
           </Section>
 
-          <Section title="Design">
-            <Field label="Colour theme">
+          <Section title={t("Design", "Diseño")}>
+            <Field label={t("Colour theme", "Combinación de colores")}>
               <div className="flex flex-wrap gap-2">
-                {THEMES.map((t, i) => {
-                  const on = t.bg === prog.bg && t.accent === prog.accent;
+                {THEMES.map((th, i) => {
+                  const on = th.bg === prog.bg && th.accent === prog.accent;
                   return (
-                    <button key={i} onClick={() => set(t)} className={`relative size-11 overflow-hidden rounded-full ring-offset-2 transition ${on ? "ring-2 ring-ink" : "ring-1 ring-line"}`} style={{ background: t.bg }}>
-                      <span className="absolute bottom-1.5 right-1.5 size-3.5 rounded-full" style={{ background: t.accent }} />
+                    <button key={i} onClick={() => set(th)} className={`relative size-11 overflow-hidden rounded-full ring-offset-2 transition ${on ? "ring-2 ring-ink" : "ring-1 ring-line"}`} style={{ background: th.bg }}>
+                      <span className="absolute bottom-1.5 right-1.5 size-3.5 rounded-full" style={{ background: th.accent }} />
                     </button>
                   );
                 })}
               </div>
             </Field>
             <div className="mt-4 grid grid-cols-3 gap-3">
-              {([["bg", "Background"], ["fg", "Text"], ["accent", "Stamp colour"]] as const).map(([k, l]) => (
+              {([["bg", t("Background", "Fondo")], ["fg", t("Text", "Texto")], ["accent", t("Stamp colour", "Color del sello")]] as const).map(([k, l]) => (
                 <label key={k} className="flex items-center gap-2 rounded-xl border border-line bg-white p-2 text-sm">
                   <input type="color" value={prog[k]} onChange={(e) => set({ [k]: e.target.value })} className="size-8 cursor-pointer rounded-lg border-0 bg-transparent" />
                   <span className="min-w-0">
@@ -154,10 +157,10 @@ function Designer({ business }: { business: Business }) {
                 </label>
               ))}
             </div>
-            <Field label="Stamp icon" className="mt-4">
+            <Field label={t("Stamp icon", "Icono del sello")} className="mt-4">
               <div className="flex flex-wrap gap-2">
                 {INDUSTRIES.map((i) => (
-                  <button key={i.key} onClick={() => set({ icon: i.key })} className={`grid size-11 place-items-center rounded-xl border ${prog.icon === i.key ? "border-ink bg-ink text-lime" : "border-line bg-white"}`} title={i.label}>
+                  <button key={i.key} onClick={() => set({ icon: i.key })} className={`grid size-11 place-items-center rounded-xl border ${prog.icon === i.key ? "border-ink bg-ink text-lime" : "border-line bg-white"}`} title={industryLabel(i.key, lang)}>
                     <i.icon size={18} />
                   </button>
                 ))}
@@ -169,7 +172,7 @@ function Designer({ business }: { business: Business }) {
         <div className="lg:sticky lg:top-8 lg:self-start">
           <div className="rounded-[28px] bg-ink p-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-white">Live preview</span>
+              <span className="text-sm font-semibold text-white">{t("Live preview", "Vista previa")}</span>
               <div className="inline-flex rounded-full bg-white/10 p-0.5 text-xs font-semibold">
                 {(["apple", "google"] as const).map((x) => (
                   <button key={x} onClick={() => setPlatform(x)} className={`rounded-full px-3 py-1.5 ${platform === x ? "bg-white text-ink" : "text-white/70"}`}>{x === "apple" ? "Apple" : "Google"}</button>
@@ -181,7 +184,7 @@ function Designer({ business }: { business: Business }) {
             </div>
             <p className="mt-4 text-center text-xs text-white/40">{prog.terms}</p>
           </div>
-          {dirty && <div className="mt-3 text-center text-sm text-amber-700">You have unsaved changes</div>}
+          {dirty && <div className="mt-3 text-center text-sm text-amber-700">{t("You have unsaved changes", "Tienes cambios sin guardar")}</div>}
         </div>
       </div>
     </>
